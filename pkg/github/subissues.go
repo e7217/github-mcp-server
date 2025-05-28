@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/github/github-mcp-server/pkg/translations"
-	"github.com/google/go-github/v69/github"
+	"github.com/google/go-github/v72/github"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -53,15 +53,7 @@ func ListSubIssues(getClient GetClientFn, t translations.TranslationHelperFunc) 
 				return nil, fmt.Errorf("failed to get GitHub client: %w", err)
 			}
 
-			// GitHub REST API endpoint for listing sub-issues
-			url := fmt.Sprintf("repos/%s/%s/issues/%d/sub_issues", owner, repo, issueNumber)
-			req, err := client.NewRequest("GET", url, nil)
-			if err != nil {
-				return nil, fmt.Errorf("failed to create request: %w", err)
-			}
-
-			var subIssues []github.Issue
-			resp, err := client.Do(ctx, req, &subIssues)
+			subIssues, resp, err := client.SubIssue.ListByIssue(ctx, owner, repo, issueNumber)
 			if err != nil {
 				return nil, fmt.Errorf("failed to list sub-issues: %w", err)
 			}
